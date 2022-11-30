@@ -41,3 +41,34 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   sendResponse({});
   return true;
 });
+
+
+function getCode(element) {
+  var es = pre.getElementsByClassName("hljs-ln-code");
+  var codes = [];
+  for (let e of es) {
+    codes.push(e.textContent);
+  }
+  return codes.join("\n");
+}
+
+var preList = document.getElementsByTagName("pre");
+var pre = preList[0];
+pre.addEventListener('contextmenu', (event) => {
+  var path = event.path;
+  for (let p of path) {
+    if (p.tagName === "PRE") {
+      var textarea = document.createElement('textarea');
+      textarea.setAttribute("readonly", true);
+      textarea.value = getCode(p);
+      document.body.appendChild(textarea);
+      textarea.setSelectionRange(0, textarea.value.length);
+      textarea.select();
+      if (document.execCommand('copy')) {
+        document.execCommand('copy');
+        console.log('复制成功');
+      }
+      document.body.removeChild(textarea);
+    }
+  }
+});
